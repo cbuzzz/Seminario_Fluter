@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
-import 'dart:convert';
-
+import 'package:flutter_application_1/sercices/userServices.dart';
 
 class UserPage extends StatefulWidget{
   @override
@@ -18,28 +16,19 @@ class UserPage extends StatefulWidget{
 
 class _UserPageState extends State<UserPage> {
   List<dynamic> _data = [];
+  final UserService _userService = UserService();
 
   @override
   void initState() {
     super.initState();
-    fetchData(); // Llamamos a la función para obtener datos cuando la página se carga
+    getUsers(); // Llamamos a la función para obtener datos cuando la página se carga
   }
 
-  Future<void> fetchData() async {
-    try {
-      final response = await http.get(Uri.parse('http://10.0.2.2:3000/api/user')); // Cambia el puerto y la ruta según tu configuración
-
-      if (response.statusCode == 200) {
-        // Decodifica la respuesta JSON
-        setState(() {
-          _data = json.decode(response.body);
-        });
-      } else {
-        throw Exception('Error al cargar los datos');
-      }
-    } catch (e) {
-      print('Error: $e');
-    }
+  Future<void> getUsers() async {
+    final data = await _userService.getUsers();
+    setState(() {
+      _data = data;
+    });
   }
 
   @override
