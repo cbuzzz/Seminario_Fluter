@@ -14,7 +14,7 @@ void main() {
       create: (_) => UserModel(),
       child: MyApp(),
     ),
-  );
+  ); //utilitza Provider per gestionar l'estat global de l'usuari
 }
 
 class MyApp extends StatelessWidget {
@@ -22,18 +22,21 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return GetMaterialApp(
       debugShowCheckedModeBanner: false,
-      initialRoute: '/login',
-      getPages: [
+      initialRoute: '/login', //estableix la pàgina inicial de l'app
+      getPages: [ //defineic les rutes de l'app, cada una amb una pàgina corresponent
+        
         // Ruta de inicio de sesión
         GetPage(
           name: '/login',
           page: () => LogInPage(),
         ),
+        
         // Ruta de registro
         GetPage(
           name: '/register',
           page: () => RegisterPage(),
         ),
+        
         // Ruta de la pantalla principal con BottomNavScaffold
         GetPage(
           name: '/home',
@@ -56,6 +59,7 @@ class MyApp extends StatelessWidget {
   }
 }
 
+// widget que conté el cos de l'app amb una barra de navegació inferior
 class BottomNavScaffold extends StatefulWidget {
   final Widget child;
 
@@ -67,7 +71,8 @@ class BottomNavScaffold extends StatefulWidget {
 
 class _BottomNavScaffoldState extends State<BottomNavScaffold> {
   int _selectedIndex = 0;
-
+  
+  // gestió de la barra de navegació (canvia l'index que toca)
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
@@ -90,13 +95,15 @@ class _BottomNavScaffoldState extends State<BottomNavScaffold> {
     }
   }
 
+  // funció build del widget 
   @override
   Widget build(BuildContext context) {
+    //Scaffold és un widget que proporciona una estructura bàsica per a les pantalles de l'app.
     return Scaffold(
-      body: widget.child,
-      bottomNavigationBar: BottomNavigationBar(
+      body: widget.child, //el contingut de la pagina (AppBar) s'especifica per un widget fill que es passarà a través del constructor del widget bottomNavScaffold
+      bottomNavigationBar: BottomNavigationBar( //defineic la barra de navegació inferior
         currentIndex: _selectedIndex,
-        onTap: _onItemTapped,
+        onTap: _onItemTapped, //canvia l'index seleccionat
         selectedItemColor: const Color.fromARGB(255, 92, 14, 105),
         unselectedItemColor: Colors.black,
         items: const [
