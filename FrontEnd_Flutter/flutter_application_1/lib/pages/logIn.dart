@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/models/userModel.dart';
+import 'package:flutter_application_1/sercices/userServices.dart';
 import 'package:get/get.dart';
-import 'package:http/http.dart' as http;
-import 'dart:convert';
 
 import 'package:provider/provider.dart';
 
@@ -14,6 +13,7 @@ class LogInPage extends StatefulWidget {
 class _LogInPageState extends State<LogInPage> {
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  final UserService _userService = UserService();
   bool _isLoading = false;
   String? _errorMessage;
 
@@ -23,50 +23,32 @@ class _LogInPageState extends State<LogInPage> {
       _errorMessage = null;
     });
 
-    // URL de la API de autenticación HTTPS
-    final url = Uri.parse('http://10.0.2.2:3000/api/user/logIn');
+    final response = await _userService.login(
+      _usernameController.text,
+      _passwordController.text,
+    );
 
-    try {
-      // Realizar solicitud POST con usuario y contraseña
-      final response = await http.post(
-        url,
-        headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({
-          'name': _usernameController.text,
-          'password': _passwordController.text,
-        }),
+    setState(() {
+      _isLoading = false;
+    });
+
+    if (response != null && response['error'] == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('¡Inicio de sesión exitoso!'),
+          duration: Duration(seconds: 3),
+        ),
       );
 
-      // Verificar si la solicitud fue exitosa
-      if (response.statusCode == 200) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('¡Inicio de sesion exitoso!'),
-            duration: Duration(seconds: 3),
-          ),
-        );
-
-        final responseData = json.decode(response.body);
-        final name = responseData['name'];
-        final mail = responseData['mail'];
-        final comment = responseData['comment'];
-
-        Provider.of<UserModel>(context, listen: false).setUser(name, mail, comment);
-        
-        Get.toNamed('/home');
-
-      } else {
-        setState(() {
-          _errorMessage = 'Error: Usuario o contraseña incorrectos';
-        });
-      }
-    } catch (e) {
+      final name = response['name'];
+      final mail = response['mail'];
+      final comment = response['comment'];
+      
+      Provider.of<UserModel>(context, listen: false).setUser(name, mail, comment);
+      Get.toNamed('/home');
+    } else {
       setState(() {
-        _errorMessage = 'Error: No se pudo conectar con la API';
-      });
-    } finally {
-      setState(() {
-        _isLoading = false;
+        _errorMessage = response?['error'] ?? 'Error desconocido';
       });
     }
   }

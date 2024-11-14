@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
-import 'dart:convert';
+import 'package:flutter_application_1/sercices/experienciasServices.dart';
 
 
 class ExperienciesPage extends StatefulWidget{
@@ -18,28 +17,19 @@ class ExperienciesPage extends StatefulWidget{
 
 class _ExperienciesPageState extends State<ExperienciesPage> {
   List<dynamic> _data = [];
+  final ExperienciaService _experienciaService = ExperienciaService();
 
   @override
   void initState() {
     super.initState();
-    fetchData(); // Llamamos a la función para obtener datos cuando la página se carga
+    getExperiencias(); // Llamamos a la función para obtener datos cuando la página se carga
   }
 
-  Future<void> fetchData() async {
-    try {
-      final response = await http.get(Uri.parse('http://10.0.2.2:3000/api/experiencias')); // Cambia el puerto y la ruta según tu configuración
-
-      if (response.statusCode == 200) {
-        // Decodifica la respuesta JSON
-        setState(() {
-          _data = json.decode(response.body);
-        });
-      } else {
-        throw Exception('Error al cargar los datos');
-      }
-    } catch (e) {
-      print('Error: $e');
-    }
+  Future<void> getExperiencias() async {
+    final data = await _experienciaService.getExperiencias();
+    setState(() {
+      _data = data;
+    });
   }
 
   @override
@@ -62,7 +52,7 @@ class _ExperienciesPageState extends State<ExperienciesPage> {
                       Text('Name: ${owner['name']}'),
                       ],     
                       Text('Participants:', style: TextStyle(fontWeight: FontWeight.bold)),
-                      ...(_data[index]['participants'] as List).map((participants) {
+                      ...((_data[index]['participants'] as List?) ?? []).map((participants) {
                         return Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [

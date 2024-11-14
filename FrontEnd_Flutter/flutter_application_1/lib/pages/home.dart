@@ -26,14 +26,15 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
     super.dispose();
   }
 
+  // construcció de la UI
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text('Home'),
       ),
-      body: Center(
-        child: Column(
+      body: Center( // center col·loca els seus fills en el centre de la pantalla
+        child: Column( // column col·loca els seus elements un sota l'altre
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Container(
@@ -63,7 +64,7 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
                   ),
                   SizedBox(height: 20),
                   // Corazón animado
-                  AnimatedBuilder(
+                  AnimatedBuilder( // crea l'animació del cor
                     animation: _animation,
                     builder: (context, child) {
                       return Transform.scale(
