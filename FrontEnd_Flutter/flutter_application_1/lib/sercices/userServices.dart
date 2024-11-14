@@ -2,8 +2,10 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 class UserService {
+  // URL base del servidor local simulat mitjançant 10.0.2.2 per a l'emulador Android
   final String baseUrl = 'http://10.0.2.2:3000/api/user';
 
+  // Obtenir la llista d'usuaris
   Future getUsers() async {
     final url = Uri.parse(baseUrl);
 
@@ -20,6 +22,7 @@ class UserService {
     }
   }
 
+  // Autenticar un usuari enviant username i password
   Future<Map<String, dynamic>?> login(String username, String password) async {
     final url = Uri.parse('$baseUrl/logIn');
     try {
@@ -39,6 +42,7 @@ class UserService {
     }
   }
 
+  // Crear un nou usuari
   Future<Map<String, dynamic>?> register(String username, String mail, String password, String comment) async {
     final url = Uri.parse('$baseUrl/newUser');
 
@@ -64,6 +68,7 @@ class UserService {
     }
   }
 
+  // Modificar un usuari
   Future<Map<String, dynamic>?> updateUser(String id, String username, String mail, String password, String comment) async {
     final url = Uri.parse('$baseUrl/$id');
     try {
@@ -88,6 +93,7 @@ class UserService {
     }
   }
 
+  // Eliminar usuari mitjançant l'ID
   Future<Map<String, dynamic>?> deleteUser(String id) async {
     final url = Uri.parse('$baseUrl/$id');
     try {
