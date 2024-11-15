@@ -12,7 +12,6 @@ class ExperiencePage extends StatefulWidget {
 
 class _ExperiencePageState extends State<ExperiencePage> {
   final ExperienceListController experienceController = Get.put(ExperienceListController());
-  final ExperienceListController experienceListController = Get.put(ExperienceListController());
   final ExperienceService experienceService = Get.put(ExperienceService());gistro aquí
 
   bool _isLoading = false;
