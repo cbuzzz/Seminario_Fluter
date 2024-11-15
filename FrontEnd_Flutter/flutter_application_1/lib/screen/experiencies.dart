@@ -1,195 +1,183 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_application_1/services/experienceService.dart';
-import 'package:flutter_application_1/models/experienceModel.dart';
 import 'package:get/get.dart';
-import 'package:flutter_application_1/controllers/experienceController.dart';
+import 'package:tu_proyecto/services/experience_service.dart';
+import 'package:tu_proyecto/models/experience_model.dart';
+import 'package:tu_proyecto/controllers/register_controller.dart';
+import 'package:tu_proyecto/controllers/experience_list_controller.dart';
 
-import '../controllers/ExperiencieController.dart';
-import '../services/experience.dart';
-
-class ExperienciesPage extends StatefulWidget {
+class ExperiencePage extends StatefulWidget {
   @override
-  _UserPageState createState() => _ExperienciesPageState();
+  _ExperiencePageState createState() => _ExperiencePageState();
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Experiencies'),
+        title: Text('Experience'),
       ),
     );
   }
 }
 
-class _ExperienciesPageState extends State<ExperienciesPage> {
+class _ExperiencePageState extends State<ExperiencePage> {
   List<dynamic> _data = [];
   final ExperienceService _experienceService = ExperienceService();
-  final ExperienceController experienceController = Get.put(RegisterController());
-
+  final RegisterController registerController = Get.put(RegisterController());
+  final ExperienceListController experienceController = Get.put(ExperienceListController());
 
   bool _isLoading = false;
-  String? _errorMessage;
-  String? _usernameError;
-  String? _mailError;
-  String? _passwordError;
-  String? _commentError;
+  String? _ownerError;
+  String? _participantsError;
+  String? _descriptionError;
 
   @override
   void initState() {
     super.initState();
-    getUsers(); // truquem a la funció per obtenir la llista d'usuaris
+    getExperiences(); // Llamada a la función para obtener la lista de experiencias
   }
 
-  Future<void> getUsers() async {
-    final data = await _userService.getUsers();
+  Future<void> getExperiences() async {
+    final data = await _experienceService.getExperiences();
     setState(() {
       _data = data;
     });
   }
 
-  // funció per eliminar un usuari
-  Future<void> deleteUser(String userId) async {
-    final response = await _userService.deleteUser(userId);
+  // Función para eliminar una experiencia
+  Future<void> deleteExperience(String experienceId) async {
+    final response = await _experienceService.deleteExperience(experienceId);
 
-    if (response ==201) {
+    if (response == 201) {
       setState(() {
-        _data.removeWhere((user) => user['_id'] == userId);
+        _data.removeWhere((experience) => experience['_id'] == experienceId);
       });
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('Usuari eliminat amb èxit!'),
+          content: Text('Experiencia eliminada con éxito!'),
           duration: Duration(seconds: 3),
         ),
       );
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Error desconegut al eliminar'),
+          content: Text('Error desconocido al eliminar'),
         ),
       );
     }
   }
 
-  // Funció per eliminar un usuari amb confirmació
-  Future<void> _confirmDeleteUser(String userId) async {
+  // Función para eliminar una experiencia con confirmación
+  Future<void> _confirmDeleteExperience(String experienceId) async {
     bool confirm = await showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Estàs segur?'),
-          content: Text('Vols eliminar aquest usuari? Aquesta acció no es pot desfer.'),
+          title: Text('¿Estás seguro?'),
+          content: Text('¿Quieres eliminar esta experiencia? Esta acción no se puede deshacer.'),
           actions: <Widget>[
             TextButton(
               onPressed: () {
-                Navigator.of(context).pop(false); // Cancela l'eliminació
+                Navigator.of(context).pop(false); // Cancela la eliminación
               },
               child: Text('No'),
             ),
             TextButton(
               onPressed: () {
-                Navigator.of(context).pop(true); // Confirma l'eliminació
+                Navigator.of(context).pop(true); // Confirma la eliminación
               },
               child: Text('Sí'),
             ),
           ],
         );
       },
-    ) ?? false; // Si el diàleg es tanca sense selecció, retornem false
+    ) ?? false; // Si el diálogo se cierra sin selección, retornamos false
 
-    // Si l'usuari confirma, eliminem l'usuari
+    // Si el usuario confirma, eliminamos la experiencia
     if (confirm) {
-      await deleteUser(userId);
+      await deleteExperience(experienceId);
     }
   }
 
   @override
-Widget build(BuildContext context) {
-  return Scaffold(
-    appBar: AppBar(title: Text('User Management')),
-    body: Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: Row(
-        children: [
-          // Lista de usuarios
-          Expanded(
-            child: Obx(() {
-              if (userController.isLoading.value) {
-                return Center(child: CircularProgressIndicator());
-              } else if (userController.userList.isEmpty) {
-                return Center(child: Text("No hay usuarios disponibles"));
-              } else {
-                return ListView.builder(
-                  itemCount: userController.userList.length,
-                  itemBuilder: (context, index) {
-                    return UserCard(user: userController.userList[index]);
-                  },
-                );
-              }
-            }),
-          ),
-          SizedBox(width: 20),
-          // Formulario de registro de usuario
-          Expanded(
-            flex: 2,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Crear Nuevo Usuario',
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                ),
-                TextField(
-                  controller: registerController.nameController,
-                  decoration: InputDecoration(
-                    labelText: 'Usuario',
-                    errorText: _usernameError, // Definir o eliminar estas variables
-                  ),
-                ),
-                TextField(
-                  controller: registerController.mailController,
-                  decoration: InputDecoration(
-                    labelText: 'Mail',
-                    errorText: _mailError,
-                  ),
-                ),
-                TextField(
-                  controller: registerController.passwordController,
-                  decoration: InputDecoration(
-                    labelText: 'Contraseña',
-                    errorText: _passwordError,
-                  ),
-                  obscureText: true,
-                ),
-                TextField(
-                  controller: registerController.commentController,
-                  decoration: InputDecoration(
-                    labelText: 'Comentario',
-                    errorText: _commentError,
-                  ),
-                ),
-                SizedBox(height: 16),
-                Obx(() {
-                  if (registerController.isLoading.value) {
-                    return CircularProgressIndicator();
-                  } else {
-                    return ElevatedButton(
-                      onPressed: registerController.signUp,
-                      child: Text('Registrarse'),
-                    );
-                  }
-                }),
-              ],
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: Text('Experience Management')),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Row(
+          children: [
+            // Lista de experiencias
+            Expanded(
+              child: Obx(() {
+                if (experienceController.isLoading.value) {
+                  return Center(child: CircularProgressIndicator());
+                } else if (experienceController.experienceList.isEmpty) {
+                  return Center(child: Text("No hay experiencias disponibles"));
+                } else {
+                  return ListView.builder(
+                    itemCount: experienceController.experienceList.length,
+                    itemBuilder: (context, index) {
+                      return ExperienceCard(experience: experienceController.experienceList[index]);
+                    },
+                  );
+                }
+              }),
             ),
-          ),
-        ],
+            SizedBox(width: 20),
+            // Formulario de registro de experiencia
+            Expanded(
+              flex: 2,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Crear Nueva Experiencia',
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                  ),
+                  TextField(
+                    controller: registerController.nameController,
+                    decoration: InputDecoration(
+                      labelText: 'Propietario',
+                      errorText: _ownerError,
+                    ),
+                  ),
+                  TextField(
+                    controller: registerController.mailController,
+                    decoration: InputDecoration(
+                      labelText: 'Participantes',
+                      errorText: _participantsError,
+                    ),
+                  ),
+                  TextField(
+                    controller: registerController.commentController,
+                    decoration: InputDecoration(
+                      labelText: 'Descripción',
+                      errorText: _descriptionError,
+                    ),
+                  ),
+                  SizedBox(height: 16),
+                  Obx(() {
+                    if (registerController.isLoading.value) {
+                      return CircularProgressIndicator();
+                    } else {
+                      return ElevatedButton(
+                        onPressed: registerController.signUp,
+                        child: Text('Registrar'),
+                      );
+                    }
+                  }),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
-    ),
-  );
-}
+    );
+  }
 }
 
-class UserCard extends StatelessWidget {
-  final UserModel user;
+class ExperienceCard extends StatelessWidget {
+  final ExperienceModel experience;
 
-  const UserCard({Key? key, required this.user}) : super(key: key);
+  const ExperienceCard({Key? key, required this.experience}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -201,18 +189,16 @@ class UserCard extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              user.name,
+              experience.owner,
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 8),
-            Text(user.mail),
+            Text(experience.participants),
             const SizedBox(height: 8),
-            Text(user.comment ?? "Sin comentarios"),
+            Text(experience.description ?? "Sin descripción"),
           ],
         ),
       ),
     );
   }
 }
-
-
