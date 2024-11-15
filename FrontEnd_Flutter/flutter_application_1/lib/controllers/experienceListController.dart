@@ -1,100 +1,59 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:flutter_application_1/models/experienceModel.dart';
-import 'package:flutter_application_1/services/experience.dart';
+import 'package:flutter_application_1/services/experience_service.dart';
+import 'package:flutter_application_1/models/experience_model.dart';
 
-class ExperienceController extends GetxController {
-  // Listado de experiencias y estado de carga
-  RxList<ExperienceModel> experienceList = <ExperienceModel>[].obs;
-  RxBool isLoading = false.obs;
-  final ExperienceService _experienceService = ExperienceService();
-
-  // Controladores de texto para el formulario
-  final TextEditingController ownerController = TextEditingController();
-  final TextEditingController participantsController = TextEditingController();
-  final TextEditingController descriptionController = TextEditingController();
+class ExperienceListController extends GetxController {
+  var isLoading = true.obs;
+  var experienceList = <ExperienceModel>[].obs;
+  final ExperienceService experienceService = ExperienceService();
 
   @override
   void onInit() {
-    super.onInit();
     fetchExperiences();
+    super.onInit();
   }
 
-  // Obtener todas las experiencias
   Future<void> fetchExperiences() async {
-    isLoading(true);
     try {
-      var data = await _experienceService.getExperiences();
-      experienceList.assignAll(data);
+      isLoading(true);
+      var experiences = await experienceService.getExperiences();
+      if (experiences != null) {
+        experienceList.assignAll(experiences);
+      }
     } catch (e) {
-      Get.snackbar("Error", "No se pudieron obtener las experiencias.",
-          snackPosition: SnackPosition.BOTTOM);
+      print("Error fetching experiences: $e");
     } finally {
       isLoading(false);
     }
   }
 
-  // Crear nueva experiencia
-  Future<void> createExperience() async {
-    final newExperience = ExperienceModel(
-      owner: ownerController.text,
-      participants: participantsController.text,
-      description: descriptionController.text,
-    );
-
+  Future<void> deleteExperience(String experienceId) async {
     try {
-      final response = await _experienceService.createExperience(newExperience);
-
+      isLoading(true);
+      var response = await experienceService.deleteExperience(experienceId);
       if (response == 201) {
-        fetchExperiences(); // Actualiza la lista
-        Get.snackbar("Éxito", "Experiencia creada correctamente.",
-            snackPosition: SnackPosition.BOTTOM);
-      }
-    } catch (e) {
-      Get.snackbar("Error", "No se pudo crear la experiencia.",
-          snackPosition: SnackPosition.BOTTOM);
-    }
-  }
-
-  // Editar una experiencia
-  Future<void> editExperience(String id) async {
-    final updatedExperience = ExperienceModel(
-      id:id,
-      owner: ownerController.text,
-      participants: participantsController.text,
-      description: descriptionController.text,
-    );
-
-    try {
-      final response = await _experienceService.editExperience(updatedExperience, id);
-
-      if (response == 201) {
-        fetchExperiences(); // Actualiza la lista
-        Get.snackbar("Éxito", "Experiencia actualizada correctamente.",
-            snackPosition: SnackPosition.BOTTOM);
-      }
-    } catch (e) {
-      Get.snackbar("Error", "No se pudo actualizar la experiencia.",
-          snackPosition: SnackPosition.BOTTOM);
-    }
-  }
-
-  // Eliminar una experiencia
-  Future<void> deleteExperience(String id) async {
-    try {
-      final response = await _experienceService.deleteExperience(id);
-
-      if (response == 200 || response == 204) {
-        fetchExperiences(); // Actualiza la lista
-        Get.snackbar("Éxito", "Experiencia eliminada correctamente.",
-            snackPosition: SnackPosition.BOTTOM);
+        experienceList.removeWhere((experience) => experience.id == experienceId);
+        Get.snackbar(
+          "Éxito",
+          "Experiencia eliminada correctamente",
+          snackPosition: SnackPosition.BOTTOM,
+        );
       } else {
-        Get.snackbar("Error", "No se pudo eliminar la experiencia.",
-            snackPosition: SnackPosition.BOTTOM);
+        Get.snackbar(
+          "Error",
+          "No se pudo eliminar la experiencia",
+          snackPosition: SnackPosition.BOTTOM,
+        );
       }
     } catch (e) {
-      Get.snackbar("Error", "Ocurrió un error al eliminar la experiencia.",
-          snackPosition: SnackPosition.BOTTOM);
+      Get.snackbar(
+        "Error",
+        "Ocurrió un error al eliminar la experiencia",
+        snackPosition: SnackPosition.BOTTOM,
+      );
+    } finally {
+      isLoading(false);
     }
   }
 }

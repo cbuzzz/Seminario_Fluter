@@ -1,0 +1,96 @@
+import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:flutter_application_1/services/experience_service.dart';
+import 'package:flutter_application_1/models/experience_model.dart';
+
+class ExperienceController extends GetxController {
+  final ExperienceService experienceService = Get.put(ExperienceService());
+
+  // Controladores de texto para la UI
+  final TextEditingController ownerController = TextEditingController();
+  final TextEditingController participantsController = TextEditingController();
+  final TextEditingController descriptionController = TextEditingController();
+
+  
+  var isLoading = false.obs;
+  var errorMessage = ''.obs;
+  var experienceList = <ExperienceModel>[].obs;
+
+  // Método para obtener todas las experiencias
+  void getExperiences() async {
+    isLoading.value = true;
+    errorMessage.value = '';
+
+    try {
+      final data = await experienceService.getExperiences();
+      experienceList.value = data.map((e) => ExperienceModel.fromJson(e)).toList();
+    } catch (e) {
+      errorMessage.value = 'Error al obtener las experiencias.';
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  // Método para crear una nueva experiencia
+  void createExperience() async {
+    
+    if (ownerController.text.isEmpty ||
+        participantsController.text.isEmpty ||
+        descriptionController.text.isEmpty) {
+      Get.snackbar('Error', 'Todos los campos son obligatorios',
+          snackPosition: SnackPosition.BOTTOM);
+      return;
+    }
+
+    final newExperience = ExperienceModel(
+      owner: ownerController.text,
+      participants: participantsController.text,
+      description: descriptionController.text,
+    );
+
+    isLoading.value = true;
+    errorMessage.value = '';
+
+    try {
+      final response = await experienceService.createExperience(newExperience);
+      if (response != null) {
+        experienceList.add(response);
+        Get.snackbar('Éxito', 'Experiencia creada exitosamente');
+        clearFields();
+      } else {
+        errorMessage.value = 'Error al crear la experiencia.';
+      }
+    } catch (e) {
+      errorMessage.value = 'Error al conectar con la API.';
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  // Método para eliminar una experiencia
+  void deleteExperience(String experienceId) async {
+    isLoading.value = true;
+    errorMessage.value = '';
+
+    try {
+      final response = await experienceService.deleteExperience(experienceId);
+      if (response == 201) {
+        experienceList.removeWhere((e) => e.id == experienceId);
+        Get.snackbar('Éxito', 'Experiencia eliminada exitosamente');
+      } else {
+        errorMessage.value = 'Error al eliminar la experiencia.';
+      }
+    } catch (e) {
+      errorMessage.value = 'Error al conectar con la API.';
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  // Método para limpiar los campos de texto
+  void clearFields() {
+    ownerController.clear();
+    participantsController.clear();
+    descriptionController.clear();
+  }
+}
