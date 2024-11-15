@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:flutter_application_1/Widgets/bottomNavigationBar.dart';
+import 'package:flutter_application_1/widgets/bottomNavigationBar.dart';
 import 'package:flutter_application_1/screen/experiencies.dart';
 import 'package:flutter_application_1/screen/logIn.dart';
 import 'package:flutter_application_1/screen/perfil.dart';
@@ -45,7 +45,7 @@ class MyApp extends StatelessWidget {
         ),
         GetPage(
           name: '/experiencies',
-          page: () => BottomNavScaffold(child: ExperienciesPage()),
+          page: () => BottomNavScaffold(child: ExperiencePage()),
         ),
         GetPage(
           name: '/perfil',

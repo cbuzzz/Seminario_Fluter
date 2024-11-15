@@ -2,9 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_application_1/services/user.dart';
 import 'package:flutter_application_1/controllers/userListController.dart';
 import 'package:flutter_application_1/controllers/registerController.dart';
-import 'package:flutter_application_1/models/userModel.dart';
 import 'package:get/get.dart';
-
+import 'package:flutter_application_1/widgets/userCard.dart';
 
 class UserPage extends StatefulWidget {
   @override
@@ -48,7 +47,7 @@ class _UserPageState extends State<UserPage> {
   Future<void> deleteUser(String userId) async {
     final response = await _userService.deleteUser(userId);
 
-    if (response ==201) {
+    if (response == 201) {
       setState(() {
         _data.removeWhere((user) => user['_id'] == userId);
       });
@@ -70,28 +69,30 @@ class _UserPageState extends State<UserPage> {
   // Funció per eliminar un usuari amb confirmació
   Future<void> _confirmDeleteUser(String userId) async {
     bool confirm = await showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text('Estàs segur?'),
-          content: Text('Vols eliminar aquest usuari? Aquesta acció no es pot desfer.'),
-          actions: <Widget>[
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop(false); // Cancela l'eliminació
-              },
-              child: Text('No'),
-            ),
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop(true); // Confirma l'eliminació
-              },
-              child: Text('Sí'),
-            ),
-          ],
-        );
-      },
-    ) ?? false; // Si el diàleg es tanca sense selecció, retornem false
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: Text('Estàs segur?'),
+              content: Text(
+                  'Vols eliminar aquest usuari? Aquesta acció no es pot desfer.'),
+              actions: <Widget>[
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop(false); // Cancela l'eliminació
+                  },
+                  child: Text('No'),
+                ),
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop(true); // Confirma l'eliminació
+                  },
+                  child: Text('Sí'),
+                ),
+              ],
+            );
+          },
+        ) ??
+        false; // Si el diàleg es tanca sense selecció, retornem false
 
     // Si l'usuari confirma, eliminem l'usuari
     if (confirm) {
@@ -100,113 +101,85 @@ class _UserPageState extends State<UserPage> {
   }
 
   @override
-Widget build(BuildContext context) {
-  return Scaffold(
-    appBar: AppBar(title: Text('User Management')),
-    body: Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: Row(
-        children: [
-          // Lista de usuarios
-          Expanded(
-            child: Obx(() {
-              if (userController.isLoading.value) {
-                return Center(child: CircularProgressIndicator());
-              } else if (userController.userList.isEmpty) {
-                return Center(child: Text("No hay usuarios disponibles"));
-              } else {
-                return ListView.builder(
-                  itemCount: userController.userList.length,
-                  itemBuilder: (context, index) {
-                    return UserCard(user: userController.userList[index]);
-                  },
-                );
-              }
-            }),
-          ),
-          SizedBox(width: 20),
-          // Formulario de registro de usuario
-          Expanded(
-            flex: 2,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Crear Nuevo Usuario',
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                ),
-                TextField(
-                  controller: registerController.nameController,
-                  decoration: InputDecoration(
-                    labelText: 'Usuario',
-                    errorText: _usernameError, // Definir o eliminar estas variables
-                  ),
-                ),
-                TextField(
-                  controller: registerController.mailController,
-                  decoration: InputDecoration(
-                    labelText: 'Mail',
-                    errorText: _mailError,
-                  ),
-                ),
-                TextField(
-                  controller: registerController.passwordController,
-                  decoration: InputDecoration(
-                    labelText: 'Contraseña',
-                    errorText: _passwordError,
-                  ),
-                  obscureText: true,
-                ),
-                TextField(
-                  controller: registerController.commentController,
-                  decoration: InputDecoration(
-                    labelText: 'Comentario',
-                    errorText: _commentError,
-                  ),
-                ),
-                SizedBox(height: 16),
-                Obx(() {
-                  if (registerController.isLoading.value) {
-                    return CircularProgressIndicator();
-                  } else {
-                    return ElevatedButton(
-                      onPressed: registerController.signUp,
-                      child: Text('Registrarse'),
-                    );
-                  }
-                }),
-              ],
-            ),
-          ),
-        ],
-      ),
-    ),
-  );
-}
-}
-
-class UserCard extends StatelessWidget {
-  final UserModel user;
-
-  const UserCard({Key? key, required this.user}) : super(key: key);
-
-  @override
   Widget build(BuildContext context) {
-    return Card(
-      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      child: Padding(
+    return Scaffold(
+      appBar: AppBar(title: Text('User Management')),
+      body: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+        child: Row(
           children: [
-            Text(
-              user.name,
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            // Lista de usuarios
+            Expanded(
+              child: Obx(() {
+                if (userController.isLoading.value) {
+                  return Center(child: CircularProgressIndicator());
+                } else if (userController.userList.isEmpty) {
+                  return Center(child: Text("No hay usuarios disponibles"));
+                } else {
+                  return ListView.builder(
+                    itemCount: userController.userList.length,
+                    itemBuilder: (context, index) {
+                      return UserCard(user: userController.userList[index]);
+                    },
+                  );
+                }
+              }),
             ),
-            const SizedBox(height: 8),
-            Text(user.mail),
-            const SizedBox(height: 8),
-            Text(user.comment ?? "Sin comentarios"),
+            SizedBox(width: 20),
+            // Formulario de registro de usuario
+            Expanded(
+              flex: 2,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Crear Nuevo Usuario',
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                  ),
+                  TextField(
+                    controller: registerController.nameController,
+                    decoration: InputDecoration(
+                      labelText: 'Usuario',
+                      errorText:
+                          _usernameError, // Definir o eliminar estas variables
+                    ),
+                  ),
+                  TextField(
+                    controller: registerController.mailController,
+                    decoration: InputDecoration(
+                      labelText: 'Mail',
+                      errorText: _mailError,
+                    ),
+                  ),
+                  TextField(
+                    controller: registerController.passwordController,
+                    decoration: InputDecoration(
+                      labelText: 'Contraseña',
+                      errorText: _passwordError,
+                    ),
+                    obscureText: true,
+                  ),
+                  TextField(
+                    controller: registerController.commentController,
+                    decoration: InputDecoration(
+                      labelText: 'Comentario',
+                      errorText: _commentError,
+                    ),
+                  ),
+                  SizedBox(height: 16),
+                  Obx(() {
+                    if (registerController.isLoading.value) {
+                      return CircularProgressIndicator();
+                    } else {
+                      return ElevatedButton(
+                        onPressed: registerController.signUp,
+                        child: Text('Añadir Usuario'),
+                      );
+                    }
+                  }),
+                ],
+              ),
+            ),
           ],
         ),
       ),

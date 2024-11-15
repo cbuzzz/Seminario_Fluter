@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:tu_proyecto/services/experience_service.dart';
-import 'package:tu_proyecto/models/experience_model.dart';
-import 'package:tu_proyecto/controllers/register_controller.dart';
-import 'package:tu_proyecto/controllers/experience_list_controller.dart';
+import 'package:flutter_application_1/services/experience.dart';
+import 'package:flutter_application_1/models/experienceModel.dart';
+import 'package:flutter_application_1/controllers/experienceController.dart';
+import 'package:flutter_application_1/controllers/registerController.dart';
+//import 'package:tu_proyecto/controllers/experience_list_controller.dart';
 
 class ExperiencePage extends StatefulWidget {
   @override
@@ -21,7 +22,7 @@ class _ExperiencePageState extends State<ExperiencePage> {
   List<dynamic> _data = [];
   final ExperienceService _experienceService = ExperienceService();
   final RegisterController registerController = Get.put(RegisterController());
-  final ExperienceListController experienceController = Get.put(ExperienceListController());
+  final ExperienceController experienceController = Get.put(ExperienceController());
 
   bool _isLoading = false;
   String? _ownerError;
@@ -160,7 +161,7 @@ class _ExperiencePageState extends State<ExperiencePage> {
                     } else {
                       return ElevatedButton(
                         onPressed: registerController.signUp,
-                        child: Text('Registrar'),
+                        child: Text('Añadir Experiencia'),
                       );
                     }
                   }),

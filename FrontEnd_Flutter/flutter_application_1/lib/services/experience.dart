@@ -12,103 +12,62 @@ class ExperienceService {
 
 
   //Función createUser
-  Future<int> createExperience(ExperienceModel newExperience)async{
-    print('createExperience');
-    print('try');
-    //Aquí llamamos a la función request
-    print('request');
-    // Utilizar Dio para enviar la solicitud POST a http://127.0.0.1:3000/experiencias
-    Response response = await dio.post('$baseUrl/experiencias', data: newExperience.toJson());
-    //En response guardamos lo que recibimos como respuesta
-    //Printeamos los datos recibidos
-
-    data = response.data.toString();
-    print('Data: $data');
-    //Printeamos el status code recibido por el backend
-
-    statusCode = response.statusCode;
-    print('Status code: $statusCode');
-
-    if (statusCode == 201) {
-      // Si el usuario se crea correctamente, retornamos el código 201
-      print('201');
-      return 201;
-    } else if (statusCode == 400) {
-      // Si hay campos faltantes, retornamos el código 400
-      print('400');
-
-      return 400;
-    } else if (statusCode == 500) {
-      // Si hay un error interno del servidor, retornamos el código 500
-      print('500');
-
-      return 500;
-    } else {
-      // Otro caso no manejado
-      print('-1');
-
-      return -1;
+   Future<int> createExperience(ExperienceModel newExperience) async {
+    try {
+      final response = await dio.post(
+        '$baseUrl/experiencias',
+        data: newExperience.toJson(),
+      );
+      return response.statusCode ?? -1;
+    } catch (e) {
+      print('Error al crear experiencia: $e');
+      rethrow;
     }
   }
 
-  Future<List<ExperienceModel>> getExperiences() async {
+   Future<List<ExperienceModel>> getExperiences() async {
     print('getExperiences');
     try {
-      var res = await dio.get('$baseUrl/experiencias');
-      List<dynamic> responseData = res.data; // Obtener los datos de la respuesta
-    
-      // Convertir los datos en una lista de objetos Place
-      List<ExperienceModel> users = responseData.map((data) => ExperienceModel.fromJson(data)).toList();
-    
-      return users; // Devolver la lista de lugares
+      final response = await dio.get('$baseUrl/experiencias');
+
+      if (response.statusCode == 200 && response.data is List) {
+        // Mapear la respuesta a una lista de ExperienceModel
+        return (response.data as List)
+            .map((item) => ExperienceModel.fromJson(item))
+            .toList();
+      } else {
+        throw Exception('Respuesta no válida del servidor');
+      }
     } catch (e) {
-      // Manejar cualquier error que pueda ocurrir durante la solicitud
       print('Error fetching data: $e');
-      throw e; // Relanzar el error para que el llamador pueda manejarlo
+      rethrow; // Relanzar el error para manejarlo externamente
     }
   }
 
-  Future<int> EditExperience(ExperienceModel newExperience, String id)async{
-    print('createExperience');
-    print('try');
-    //Aquí llamamos a la función request
-    print('request');
-
-   
-
-    // Utilizar Dio para enviar la solicitud POST a http://127.0.0.1:3000/experiencias
-    Response response = await dio.put('$baseUrl/experiencias/$id', data: newExperience.toJson());
-    //En response guardamos lo que recibimos como respuesta
-    //Printeamos los datos recibidos
-
-    data = response.data.toString();
-    print('Data: $data');
-    //Printeamos el status code recibido por el backend
-
-    statusCode = response.statusCode;
-    print('Status code: $statusCode');
-
-    if (statusCode == 201) {
-      // Si el usuario se crea correctamente, retornamos el código 201
-      print('201');
-      return 201;
-    } else if (statusCode == 400) {
-      // Si hay campos faltantes, retornamos el código 400
-      print('400');
-
-      return 400;
-    } else if (statusCode == 500) {
-      // Si hay un error interno del servidor, retornamos el código 500
-      print('500');
-
-      return 500;
-    } else {
-      // Otro caso no manejado
-      print('-1');
-
-      return -1;
+  Future<int> editExperience(ExperienceModel newExperience, String id) async {
+    try {
+      final response = await dio.put(
+        '$baseUrl/experiencias/$id',
+        data: newExperience.toJson(),
+      );
+      return response.statusCode ?? -1;
+    } catch (e) {
+      print('Error al editar experiencia: $e');
+      rethrow;
     }
   }
+
+  Future<int> deleteExperience(String id) async {
+    try {
+      final response = await dio.delete('$baseUrl/experiencias/$id');
+      return response.statusCode ?? -1;
+    } catch (e) {
+      print('Error al eliminar experiencia: $e');
+      rethrow;
+    }
+  }
+
+  
 
 
 }
