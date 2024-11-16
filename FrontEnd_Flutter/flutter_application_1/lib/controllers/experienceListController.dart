@@ -9,8 +9,9 @@ class ExperienceListController extends GetxController {
 
   @override
   void onInit() {
-    fetchExperiences();
     super.onInit();
+    fetchExperiences();
+
   }
 
   Future<void> fetchExperiences() async {
@@ -27,35 +28,20 @@ class ExperienceListController extends GetxController {
     }
   }
 
-  Future<bool> deleteExperience(String experienceId) async {
+  Future<void> editExperience(String id, ExperienceModel updatedExperience) async {
     try {
-      isLoading(true);
-      var response = await experienceService.deleteExperience(experienceId);
-      if (response == 201) {
-        experienceList.removeWhere((experience) => experience.id == experienceId);
-        Get.snackbar(
-          "Éxito",
-          "Experiencia eliminada correctamente",
-          snackPosition: SnackPosition.BOTTOM,
-        );
-        return true;
+      isLoading(true);  // Establecemos el estado de carga a true
+      var statusCode = await experienceService.EditExperience(updatedExperience, id);
+      if (statusCode == 201) {
+        Get.snackbar('Éxito', 'Experiencia actualizada con éxito');
+        fetchExperiences();  // Recargamos la lista de experiencias después de editar
       } else {
-        Get.snackbar(
-          "Error",
-          "No se pudo eliminar la experiencia",
-          snackPosition: SnackPosition.BOTTOM,
-        );
-        return false;
+        Get.snackbar('Error', 'Error al actualizar la experiencia');
       }
     } catch (e) {
-      Get.snackbar(
-        "Error",
-        "Ocurrió un error al eliminar la experiencia",
-        snackPosition: SnackPosition.BOTTOM,
-      );
-      return false;
+      print("Error editing experience: $e");
     } finally {
-      isLoading(false);
+      isLoading(false);  // Establecemos el estado de carga a false una vez que termine
     }
   }
 }
