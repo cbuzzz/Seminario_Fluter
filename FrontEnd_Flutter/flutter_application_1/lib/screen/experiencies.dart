@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:flutter_application_1/controllers/experience_list_controller.dart';
+import 'package:flutter_application_1/controllers/experiencesController.dart';
+import 'package:flutter_application_1/models/experienceModel.dart';
+import 'package:flutter_application_1/services/experience.dart';
+
 
 class ExperiencePage extends StatefulWidget {
   @override
@@ -9,6 +13,14 @@ class ExperiencePage extends StatefulWidget {
 
 class _ExperiencePageState extends State<ExperiencePage> {
   final ExperienceListController experienceController = Get.put(ExperienceListController());
+  final ExperienceListController experienceListController = Get.put(ExperienceListController());
+  final ExperienceService experienceService = Get.put(ExperienceService());
+
+   @override
+  void initState() {
+    super.initState();
+     experienceService.getExperiences();}
+  
 
   Future<void> _confirmDeleteExperience(String experienceId) async {
     bool confirm = await showDialog(
