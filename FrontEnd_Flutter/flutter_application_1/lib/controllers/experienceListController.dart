@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:flutter_application_1/services/experience_service.dart';
 import 'package:flutter_application_1/models/experience_model.dart';
@@ -6,7 +5,7 @@ import 'package:flutter_application_1/models/experience_model.dart';
 class ExperienceListController extends GetxController {
   var isLoading = true.obs;
   var experienceList = <ExperienceModel>[].obs;
-  final ExperienceService experienceService = ExperienceService();
+  final ExperienceService experienceService = Get.find<ExperienceService>();
 
   @override
   void onInit() {
@@ -28,7 +27,7 @@ class ExperienceListController extends GetxController {
     }
   }
 
-  Future<void> deleteExperience(String experienceId) async {
+  Future<bool> deleteExperience(String experienceId) async {
     try {
       isLoading(true);
       var response = await experienceService.deleteExperience(experienceId);
@@ -39,12 +38,14 @@ class ExperienceListController extends GetxController {
           "Experiencia eliminada correctamente",
           snackPosition: SnackPosition.BOTTOM,
         );
+        return true;
       } else {
         Get.snackbar(
           "Error",
           "No se pudo eliminar la experiencia",
           snackPosition: SnackPosition.BOTTOM,
         );
+        return false;
       }
     } catch (e) {
       Get.snackbar(
@@ -52,6 +53,7 @@ class ExperienceListController extends GetxController {
         "Ocurrió un error al eliminar la experiencia",
         snackPosition: SnackPosition.BOTTOM,
       );
+      return false;
     } finally {
       isLoading(false);
     }
