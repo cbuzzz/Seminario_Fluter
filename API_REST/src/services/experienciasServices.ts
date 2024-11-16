@@ -2,7 +2,7 @@ import { experienciasofDB } from "../modelos/types_d_experiencias";
 
 export const getEntries = {
     getAll: async()=>{
-    return await experienciasofDB.find().populate('owner').populate('participants');;
+    return await experienciasofDB.find().populate('owner').populate('participants');
     },
     findById: async(id:string)=>{
         return await experienciasofDB.findById(id);
