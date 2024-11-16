@@ -1,33 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:flutter_application_1/services/experience_service.dart';
-import 'package:flutter_application_1/models/experience_model.dart';
+import 'package:flutter_application_1/models/experienceModel.dart';
+import 'package:flutter_application_1/services/experience.dart';
+
+
 
 class ExperienceController extends GetxController {
-  final ExperienceService experienceService = Get.find<ExperienceService>();
-
+  final ExperienceService experienceService = Get.put(ExperienceService());
   final TextEditingController ownerController = TextEditingController();
   final TextEditingController participantsController = TextEditingController();
   final TextEditingController descriptionController = TextEditingController();
 
   var isLoading = false.obs;
   var errorMessage = ''.obs;
-  var experienceList = <ExperienceModel>[].obs;
-
-  void getExperiences() async {
-    isLoading.value = true;
-    errorMessage.value = '';
-    try {
-      final data = await experienceService.getExperiences();
-      experienceList.value = data.map((e) => ExperienceModel.fromJson(e)).toList();
-    } catch (e) {
-      errorMessage.value = 'Error al obtener las experiencias.';
-    } finally {
-      isLoading.value = false;
-    }
-  }
-
+ 
   void createExperience() async {
+  
     if (ownerController.text.isEmpty ||
         participantsController.text.isEmpty ||
         descriptionController.text.isEmpty) {
@@ -35,54 +23,29 @@ class ExperienceController extends GetxController {
           snackPosition: SnackPosition.BOTTOM);
       return;
     }
-
+    
     final newExperience = ExperienceModel(
       owner: ownerController.text,
       participants: participantsController.text,
       description: descriptionController.text,
     );
-
+   
     isLoading.value = true;
     errorMessage.value = '';
-
     try {
-      final response = await experienceService.createExperience(newExperience);
-      if (response == 201) {
-        experienceList.add(newExperience);
-        Get.snackbar('Éxito', 'Experiencia creada exitosamente');
-        clearFields();
+     
+      final statusCode = await experienceService.createExperience(newExperience);
+      if (statusCode == 201) {
+       
+        Get.snackbar('Éxito', 'Experiencia creada con éxito');
+        Get.toNamed('/experiencies');
       } else {
-        errorMessage.value = 'Error al crear la experiencia.';
+        errorMessage.value = 'Error al crear la experiencia';
       }
     } catch (e) {
-      errorMessage.value = 'Error al conectar con la API.';
+      errorMessage.value = 'Error: No se pudo conectar con la API';
     } finally {
       isLoading.value = false;
     }
-  }
-
-  void deleteExperience(String experienceId) async {
-    isLoading.value = true;
-    errorMessage.value = '';
-
-    try {
-      final response = await experienceService.deleteExperience(experienceId);
-      if (response == 201) {
-        experienceList.removeWhere((e) => e.id == experienceId);
-        Get.snackbar('Éxito', 'Experiencia eliminada exitosamente');
-      } else {
-        errorMessage.value = 'Error al eliminar la experiencia.';
-      }
-    } catch (e) {
-      errorMessage.value = 'Error al conectar con la API.';
-    } finally {
-      isLoading.value = false;
-    }
-  }
-
-  void clearFields() {
-    ownerController.clear();
-    participantsController.clear();
-    descriptionController.clear();
   }
 }
