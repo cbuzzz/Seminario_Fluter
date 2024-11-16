@@ -4,23 +4,19 @@ import 'package:flutter_application_1/services/experience_service.dart';
 import 'package:flutter_application_1/models/experience_model.dart';
 
 class ExperienceController extends GetxController {
-  final ExperienceService experienceService = Get.put(ExperienceService());
+  final ExperienceService experienceService = Get.find<ExperienceService>();
 
-  // Controladores de texto para la UI
   final TextEditingController ownerController = TextEditingController();
   final TextEditingController participantsController = TextEditingController();
   final TextEditingController descriptionController = TextEditingController();
 
-  
   var isLoading = false.obs;
   var errorMessage = ''.obs;
   var experienceList = <ExperienceModel>[].obs;
 
-  // Método para obtener todas las experiencias
   void getExperiences() async {
     isLoading.value = true;
     errorMessage.value = '';
-
     try {
       final data = await experienceService.getExperiences();
       experienceList.value = data.map((e) => ExperienceModel.fromJson(e)).toList();
@@ -31,9 +27,7 @@ class ExperienceController extends GetxController {
     }
   }
 
-  // Método para crear una nueva experiencia
   void createExperience() async {
-    
     if (ownerController.text.isEmpty ||
         participantsController.text.isEmpty ||
         descriptionController.text.isEmpty) {
@@ -53,8 +47,8 @@ class ExperienceController extends GetxController {
 
     try {
       final response = await experienceService.createExperience(newExperience);
-      if (response != null) {
-        experienceList.add(response);
+      if (response == 201) {
+        experienceList.add(newExperience);
         Get.snackbar('Éxito', 'Experiencia creada exitosamente');
         clearFields();
       } else {
@@ -67,7 +61,6 @@ class ExperienceController extends GetxController {
     }
   }
 
-  // Método para eliminar una experiencia
   void deleteExperience(String experienceId) async {
     isLoading.value = true;
     errorMessage.value = '';
@@ -87,7 +80,6 @@ class ExperienceController extends GetxController {
     }
   }
 
-  // Método para limpiar los campos de texto
   void clearFields() {
     ownerController.clear();
     participantsController.clear();
