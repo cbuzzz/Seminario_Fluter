@@ -25,24 +25,26 @@ class ExperienceService {
     }
   }
 
-   Future<List<ExperienceModel>> getExperiences() async {
-    print('getExperiences');
-    try {
-      final response = await dio.get('$baseUrl/experiencias');
-
-      if (response.statusCode == 200 && response.data is List) {
-        // Mapear la respuesta a una lista de ExperienceModel
+  Future<List<ExperienceModel>> getExperiences() async {
+  try {
+    final response = await dio.get('$baseUrl/experiencias');
+    if (response.statusCode == 200 && response.data != null) {
+      // Validar si data es realmente una lista
+      if (response.data is List) {
         return (response.data as List)
-            .map((item) => ExperienceModel.fromJson(item))
+            .map((item) => ExperienceModel.fromJson(item as Map<String, dynamic>))
             .toList();
       } else {
-        throw Exception('Respuesta no válida del servidor');
+        throw Exception('El formato de la respuesta no es una lista');
       }
-    } catch (e) {
-      print('Error fetching data: $e');
-      rethrow; // Relanzar el error para manejarlo externamente
+    } else {
+      throw Exception('Respuesta no válida del servidor');
     }
+  } catch (e) {
+    print('Error al obtener experiencias: $e');
+    rethrow;
   }
+}
 
   Future<int> editExperience(ExperienceModel newExperience, String id) async {
     try {

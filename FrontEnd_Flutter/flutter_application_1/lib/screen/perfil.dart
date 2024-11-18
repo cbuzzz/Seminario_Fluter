@@ -3,12 +3,14 @@ import 'package:get/get.dart';
 import 'package:flutter_application_1/controllers/userModelController.dart';
 
 class PerfilPage extends StatelessWidget {
+  const PerfilPage({super.key});
+
   @override
   Widget build(BuildContext context) {
     final userController = Get.find<UserModelController>();
 
     return Scaffold(
-      appBar: AppBar(title: Text('Perfil de Usuario')),
+      appBar: AppBar(title: const Text('Perfil de Usuario')),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Obx(() {
@@ -19,13 +21,13 @@ class PerfilPage extends StatelessWidget {
               Text('Nombre: ${user.name}'),
               Text('Email: ${user.mail}'),
               Text('Comentario: ${user.comment}'),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               Card(
                 clipBehavior: Clip.antiAlias,
                 child: Column(
                   children: [
                     ListTile(
-                      leading: Icon(Icons.arrow_drop_down_circle),
+                      leading: const Icon(Icons.arrow_drop_down_circle),
                       title: const Text('Card title 1'),
                       subtitle: Text(
                         'Secondary Text',
@@ -39,7 +41,7 @@ class PerfilPage extends StatelessWidget {
                         style: TextStyle(color: Colors.black.withOpacity(0.6)),
                       ),
                     ),
-                    ButtonBar(
+                    OverflowBar(
                       alignment: MainAxisAlignment.start,
                       children: [
                         TextButton(

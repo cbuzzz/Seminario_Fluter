@@ -43,7 +43,7 @@ class RegisterController extends GetxController {
 
       final response = await userService.createUser(newUser);
 
-      if (response != null && response== 201) {
+      if (response== 201) {
         Get.snackbar('Éxito', 'Usuario creado exitosamente');
         Get.toNamed('/login');
       } else {

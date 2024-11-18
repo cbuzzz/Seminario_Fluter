@@ -6,12 +6,14 @@ import 'package:get/get.dart';
 import 'package:flutter_application_1/widgets/userCard.dart';
 
 class UserPage extends StatefulWidget {
+  const UserPage({super.key});
+
   @override
   _UserPageState createState() => _UserPageState();
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('User'),
+        title: const Text('User'),
       ),
     );
   }
@@ -23,7 +25,7 @@ class _UserPageState extends State<UserPage> {
   final RegisterController registerController = Get.put(RegisterController());
   final UserListController userController = Get.put(UserListController());
 
-  bool _isLoading = false;
+  final bool _isLoading = false;
   String? _errorMessage;
   String? _usernameError;
   String? _mailError;
@@ -59,7 +61,7 @@ class _UserPageState extends State<UserPage> {
       );
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
+        const SnackBar(
           content: Text('Error desconegut al eliminar'),
         ),
       );
@@ -72,38 +74,33 @@ class _UserPageState extends State<UserPage> {
           context: context,
           builder: (BuildContext context) {
             return AlertDialog(
-              title: Text('Estàs segur?'),
-              content: Text(
+              title: const Text('Estàs segur?'),
+              content: const Text(
                   'Vols eliminar aquest usuari? Aquesta acció no es pot desfer.'),
               actions: <Widget>[
                 TextButton(
                   onPressed: () {
                     Navigator.of(context).pop(false); // Cancela l'eliminació
                   },
-                  child: Text('No'),
+                  child: const Text('No'),
                 ),
                 TextButton(
                   onPressed: () {
                     Navigator.of(context).pop(true); // Confirma l'eliminació
                   },
-                  child: Text('Sí'),
+                  child: const Text('Sí'),
                 ),
               ],
             );
           },
         ) ??
         false; // Si el diàleg es tanca sense selecció, retornem false
-
-    // Si l'usuari confirma, eliminem l'usuari
-    if (confirm) {
-      await deleteUser(userId);
-    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('User Management')),
+      appBar: AppBar(title: const Text('User Management')),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Row(
@@ -112,9 +109,9 @@ class _UserPageState extends State<UserPage> {
             Expanded(
               child: Obx(() {
                 if (userController.isLoading.value) {
-                  return Center(child: CircularProgressIndicator());
+                  return const Center(child: CircularProgressIndicator());
                 } else if (userController.userList.isEmpty) {
-                  return Center(child: Text("No hay usuarios disponibles"));
+                  return const Center(child: Text("No hay usuarios disponibles"));
                 } else {
                   return ListView.builder(
                     itemCount: userController.userList.length,
@@ -125,14 +122,14 @@ class _UserPageState extends State<UserPage> {
                 }
               }),
             ),
-            SizedBox(width: 20),
+            const SizedBox(width: 20),
             // Formulario de registro de usuario
             Expanded(
               flex: 2,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
+                  const Text(
                     'Crear Nuevo Usuario',
                     style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                   ),
@@ -166,14 +163,14 @@ class _UserPageState extends State<UserPage> {
                       errorText: _commentError,
                     ),
                   ),
-                  SizedBox(height: 16),
+                  const SizedBox(height: 16),
                   Obx(() {
                     if (registerController.isLoading.value) {
-                      return CircularProgressIndicator();
+                      return const CircularProgressIndicator();
                     } else {
                       return ElevatedButton(
                         onPressed: registerController.signUp,
-                        child: Text('Añadir Usuario'),
+                        child: const Text('Añadir Usuario'),
                       );
                     }
                   }),

@@ -6,7 +6,7 @@ class BottomNavScaffold extends StatelessWidget {
   final Widget child;
   final NavigationController navController = Get.put(NavigationController());
 
-  BottomNavScaffold({required this.child});
+  BottomNavScaffold({super.key, required this.child});
 
   @override
   Widget build(BuildContext context) {

@@ -3,14 +3,16 @@ import 'package:get/get.dart';
 import 'package:flutter_application_1/controllers/userController.dart';
 
 class LogInPage extends StatelessWidget {
-  // Inyectar el controlador para que esté disponible en esta página
-  final UserController userController = Get.put(UserController());
+  const LogInPage({super.key});
 
   @override
   Widget build(BuildContext context) {
+    // Inyectar el controlador dentro de build
+    final UserController userController = Get.put(UserController());
+
     return Scaffold(
       appBar: AppBar(
-        title: Text('Iniciar Sesión'),
+        title: const Text('Iniciar Sesión'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -19,25 +21,25 @@ class LogInPage extends StatelessWidget {
           children: [
             TextField(
               controller: userController.mailController,
-              decoration: InputDecoration(labelText: 'Correo Electrónico'),
+              decoration: const InputDecoration(labelText: 'Correo Electrónico'),
             ),
             TextField(
               controller: userController.passwordController,
-              decoration: InputDecoration(labelText: 'Contraseña'),
+              decoration: const InputDecoration(labelText: 'Contraseña'),
               obscureText: true,
             ),
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
 
             // Mostrar CircularProgressIndicator o el botón, según el estado de carga
             Obx(() {
               if (userController.isLoading.value) {
-                return CircularProgressIndicator();
+                return const CircularProgressIndicator();
               } else {
                 return ElevatedButton(
                   onPressed: () {
                     userController.logIn();
                   },
-                  child: Text('Iniciar Sesión'),
+                  child: const Text('Iniciar Sesión'),
                 );
               }
             }),
@@ -49,7 +51,7 @@ class LogInPage extends StatelessWidget {
                   padding: const EdgeInsets.only(top: 8.0),
                   child: Text(
                     userController.errorMessage.value,
-                    style: TextStyle(color: Colors.red),
+                    style: const TextStyle(color: Colors.red),
                   ),
                 );
               } else {
@@ -57,12 +59,12 @@ class LogInPage extends StatelessWidget {
               }
             }),
 
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
 
             // Botón para navegar a la página de registro
             ElevatedButton(
               onPressed: () => Get.toNamed('/register'),
-              child: Text('Registrarse'),
+              child: const Text('Registrarse'),
             ),
           ],
         ),

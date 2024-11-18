@@ -1,89 +1,46 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:flutter_application_1/controllers/experience_list_controller.dart';
-import 'package:flutter_application_1/controllers/experiencesController.dart';
-import 'package:flutter_application_1/models/experienceModel.dart';
-import 'package:flutter_application_1/services/experience.dart';
+import 'package:flutter_application_1/controllers/experienceListController.dart';
+import 'package:flutter_application_1/widgets/experienceCard.dart';
+import 'package:flutter_application_1/widgets/experienceDialog.dart';
 
-
-class ExperiencePage extends StatefulWidget {
-  @override
-  _ExperiencePageState createState() => _ExperiencePageState();
-}
-
-class _ExperiencePageState extends State<ExperiencePage> {
-  final ExperienceListController experienceController = Get.put(ExperienceListController());
-  final ExperienceListController experienceListController = Get.put(ExperienceListController());
-  final ExperienceService experienceService = Get.put(ExperienceService());
-
-   @override
-  void initState() {
-    super.initState();
-     experienceService.getExperiences();}
-  
-
-  Future<void> _confirmDeleteExperience(String experienceId) async {
-    bool confirm = await showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            return AlertDialog(
-              title: Text('¿Estás seguro?'),
-              content: Text('¿Quieres eliminar esta experiencia? Esta acción no se puede deshacer.'),
-              actions: <Widget>[
-                TextButton(
-                  onPressed: () => Navigator.of(context).pop(false),
-                  child: Text('No'),
-                ),
-                TextButton(
-                  onPressed: () => Navigator.of(context).pop(true),
-                  child: Text('Sí'),
-                ),
-              ],
-            );
-          },
-        ) ??
-        false;
-
-    if (confirm) {
-      final success = await experienceController.deleteExperience(experienceId);
-      if (success) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Experiencia eliminada con éxito!')),
-        );
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error desconocido al eliminar')),
-        );
-      }
-    }
-  }
+class ExperiencePage extends StatelessWidget {
+  const ExperiencePage({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final experienceListController = Get.find<ExperienceListController>();
+
     return Scaffold(
-      appBar: AppBar(title: Text('Experience Management')),
+      appBar: AppBar(title: const Text('Experiencias')),
       body: Obx(() {
-        if (experienceController.isLoading.value) {
-          return Center(child: CircularProgressIndicator());
-        } else if (experienceController.experienceList.isEmpty) {
-          return Center(child: Text("No hay experiencias disponibles"));
-        } else {
-          return ListView.builder(
-            itemCount: experienceController.experienceList.length,
-            itemBuilder: (context, index) {
-              final experience = experienceController.experienceList[index];
-              return ListTile(
-                title: Text(experience.owner),
-                subtitle: Text(experience.description),
-                trailing: IconButton(
-                  icon: Icon(Icons.delete),
-                  onPressed: () => _confirmDeleteExperience(experience.id),
-                ),
-              );
-            },
+        if (experienceListController.isLoading.value) {
+          return const Center(child: CircularProgressIndicator());
+        }
+
+        if (experienceListController.experienceList.isEmpty) {
+          return const Center(
+            child: Text(
+              "No hay experiencias disponibles",
+              style: TextStyle(fontSize: 18),
+            ),
           );
         }
+
+        return ListView.builder(
+          itemCount: experienceListController.experienceList.length,
+          itemBuilder: (context, index) {
+            final experience = experienceListController.experienceList[index];
+            return ExperienceCard(experience: experience, key: ValueKey(experience.id));
+          },
+        );
       }),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () => Get.to(() => const CreateExperienceDialog()),
+        child: const Icon(Icons.add),
+      ),
     );
   }
 }
+
+

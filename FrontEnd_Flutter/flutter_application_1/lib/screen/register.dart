@@ -3,12 +3,15 @@ import 'package:get/get.dart';
 import 'package:flutter_application_1/controllers/registerController.dart';
 
 class RegisterPage extends StatelessWidget {
-  final RegisterController registerController = Get.put(RegisterController());
+  const RegisterPage({super.key});
 
   @override
   Widget build(BuildContext context) {
+    // Inicializar el controlador dentro de build
+    final RegisterController registerController = Get.put(RegisterController());
+
     return Scaffold(
-      appBar: AppBar(title: Text('Registrarse')),
+      appBar: AppBar(title: const Text('Registrarse')),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -16,31 +19,31 @@ class RegisterPage extends StatelessWidget {
           children: [
             TextField(
               controller: registerController.nameController,
-              decoration: InputDecoration(labelText: 'Usuario'),
+              decoration: const InputDecoration(labelText: 'Usuario'),
             ),
             TextField(
               controller: registerController.mailController,
-              decoration: InputDecoration(labelText: 'Correo Electrónico'),
+              decoration: const InputDecoration(labelText: 'Correo Electrónico'),
             ),
             TextField(
               controller: registerController.passwordController,
-              decoration: InputDecoration(labelText: 'Contraseña'),
+              decoration: const InputDecoration(labelText: 'Contraseña'),
               obscureText: true,
             ),
             TextField(
               controller: registerController.commentController,
-              decoration: InputDecoration(labelText: 'Comentario'),
+              decoration: const InputDecoration(labelText: 'Comentario'),
             ),
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
             
             // Mostrar CircularProgressIndicator o botón de registro según el estado de carga
             Obx(() {
               if (registerController.isLoading.value) {
-                return CircularProgressIndicator();
+                return const CircularProgressIndicator();
               } else {
                 return ElevatedButton(
                   onPressed: registerController.signUp,
-                  child: Text('Registrarse'),
+                  child: const Text('Registrarse'),
                 );
               }
             }),
@@ -52,7 +55,7 @@ class RegisterPage extends StatelessWidget {
                   padding: const EdgeInsets.only(top: 8.0),
                   child: Text(
                     registerController.errorMessage.value,
-                    style: TextStyle(color: Colors.red),
+                    style: const TextStyle(color: Colors.red),
                   ),
                 );
               } else {
@@ -60,12 +63,12 @@ class RegisterPage extends StatelessWidget {
               }
             }),
 
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
             
             // Botón para volver a la página de inicio de sesión
             ElevatedButton(
               onPressed: () => Get.toNamed('/login'),
-              child: Text('Volver'),
+              child: const Text('Volver'),
             ),
           ],
         ),

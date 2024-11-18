@@ -1,47 +1,64 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/models/userModel.dart';
+import 'package:flutter_application_1/services/user.dart';
+
 
 class ExperienceModel with ChangeNotifier {
   final String id;
-  String _owner;
-  String _participants;
-  String _description;
+  final String owner;
+  final List<String> participants;
+  String description;
+
+   UserModel? ownerDetails; // Detalles del propietario
+  List<UserModel>? participantsDetails;
 
   // Constructor
-  ExperienceModel({this.id = '', required String owner, required String participants, required String description})
-      : _owner = owner,
-        _participants = participants,
-        _description = description;
+    ExperienceModel({
+    required this.id,
+    required this.owner,
+    required List<String?> participants,
+    required this.description,
+     this.ownerDetails,
+    this.participantsDetails,
+  }) : participants = participants.whereType<String>().toList();
 
-  // Getters
-  String get owner => _owner;
-  String get participants => _participants;
-  String get description => _description;
-
-  // Método para actualizar el usuario
-  void setExperience(String owner, String participants, String description) {
-    _owner = owner;
-    _participants = participants;
-    _description = description;
-    notifyListeners();
-  }
-
-  // Método fromJson para crear una instancia de UserModel desde un Map
+  // Método para crear una instancia desde un JSON
   factory ExperienceModel.fromJson(Map<String, dynamic> json) {
-    return ExperienceModel(
-       id: json['_id'] ?? '', // Campo del backend para el ID
-      owner: json['owner'] ?? 'Propietario desconocido',
-      participants: json['participants'] ?? 'Sin Participantes',
-      description: json['description'] ?? 'Sin descripcion',
-    );
-  }
+  return ExperienceModel(
+    id: json['_id']?.toString() ?? '', // Convertir ID a String
+    owner: json['owner']?.toString() ?? 'Sin propietario', // Convertir owner a String
+    participants: (json['participants'] as List?) // Asegurar lista
+            ?.map((p) => p?.toString()) // Convertir elementos a String
+            .toList() ??
+        [],
+    description: json['description']?.toString() ?? 'Sin descripción',
+  );
+}
 
-  // Método toJson para convertir una instancia de UserModel en un Map
+  // Método para convertir el modelo en JSON
   Map<String, dynamic> toJson() {
     return {
       '_id': id,
-      'name': _owner,
-      'mail': _participants,
-      'comment': _description,
+     'owner': owner, // Solo el ID
+      'participants': participants, // IDs de los participantes
+      'description': description,
     };
   }
+
+ Future<void> loadDetails() async {
+    final userService = UserService();
+
+    try {
+      // Obtener detalles del propietario
+      ownerDetails = await userService.getUser(owner);
+
+      // Obtener detalles de los participantes
+      participantsDetails = await Future.wait(
+        participants.map((id) => userService.getUser(id)),
+      ).then((list) => list.whereType<UserModel>().toList());
+    } catch (e) {
+      print("Error al cargar detalles: $e");
+    }
+  }
+
 }

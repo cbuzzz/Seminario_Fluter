@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:flutter_application_1/services/user.dart';
-//import 'package:flutter_application_1/models/userModel.dart';
+import 'package:flutter_application_1/controllers/userModelController.dart';
 
 class UserController extends GetxController {
   final UserService userService = Get.put(UserService());
+  final UserModelController userModelController = Get.find();
 
   // Controladores de texto para la UI
   final TextEditingController mailController = TextEditingController();
@@ -43,16 +45,12 @@ class UserController extends GetxController {
       // Llamada al servicio para iniciar sesión
       final responseData = await userService.logIn(logIn);
 
-      print('el response data es:${ responseData}');
+      print('el response data es:$responseData');
 
-      if (responseData != null) {
-        // Manejo de respuesta exitosa
-        Get.snackbar('Éxito', 'Inicio de sesión exitoso');
-        Get.toNamed('/home');
-      } else {
-        errorMessage.value = 'Usuario o contraseña incorrectos';
-      }
-    } catch (e) {
+      // Manejo de respuesta exitosa
+      Get.snackbar('Éxito', 'Inicio de sesión exitoso');
+      Get.toNamed('/home');
+        } catch (e) {
       errorMessage.value = 'Error: No se pudo conectar con la API';
     } finally {
       isLoading.value = false;

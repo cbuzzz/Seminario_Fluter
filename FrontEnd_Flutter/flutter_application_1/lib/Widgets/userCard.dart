@@ -4,7 +4,7 @@ import 'package:flutter_application_1/models/userModel.dart';
 class UserCard extends StatelessWidget {
   final UserModel user;
 
-  const UserCard({Key? key, required this.user}) : super(key: key);
+  const UserCard({super.key, required this.user});
 
   @override
   Widget build(BuildContext context) {
@@ -17,7 +17,7 @@ class UserCard extends StatelessWidget {
           children: [
             Text(
               user.name,
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 8),
             Text(user.mail),

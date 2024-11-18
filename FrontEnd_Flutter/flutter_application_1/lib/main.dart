@@ -7,19 +7,27 @@ import 'package:flutter_application_1/screen/perfil.dart';
 import 'package:flutter_application_1/screen/register.dart';
 import 'package:flutter_application_1/screen/user.dart';
 import 'package:flutter_application_1/screen/home.dart';
+import 'package:get_storage/get_storage.dart';
+import 'package:flutter_application_1/controllers/userModelController.dart';
+import 'package:flutter_application_1/controllers/experienceController.dart';
+import 'package:flutter_application_1/controllers/experienceListController.dart';
 
+void main() async {
+  await GetStorage.init();
+  Get.put(UserModelController());
+  
+  
 
-void main() {
   runApp(
     MyApp(),
   );
 }
 
 class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
   @override
   Widget build(BuildContext context) {
-   
-
     return GetMaterialApp(
       debugShowCheckedModeBanner: false,
       initialRoute: '/login',
@@ -55,69 +63,3 @@ class MyApp extends StatelessWidget {
     );
   }
 }
-
-/* class BottomNavScaffold extends StatefulWidget {
-  final Widget child;
-
-  const BottomNavScaffold({required this.child});
-
-  @override
-  _BottomNavScaffoldState createState() => _BottomNavScaffoldState();
-}
-
-class _BottomNavScaffoldState extends State<BottomNavScaffold> {
-  int _selectedIndex = 0;
-
-  void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
-
-    // Navegación usando Get.toNamed()
-    switch (_selectedIndex) {
-      case 0:
-        Get.toNamed('/home');
-        break;
-      case 1:
-        Get.toNamed('/usuarios');
-        break;
-      case 2:
-        Get.toNamed('/experiencies');
-        break;
-      case 3:
-        Get.toNamed('/perfil');
-        break;
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: widget.child,
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _selectedIndex,
-        onTap: _onItemTapped,
-        selectedItemColor: const Color.fromARGB(255, 92, 14, 105),
-        unselectedItemColor: Colors.black,
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Home',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person),
-            label: 'Usuarios',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.local_activity),
-            label: 'Experiencias',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person),
-            label: 'Perfil',
-          ),
-        ],
-      ),
-    );
-  }
-} */

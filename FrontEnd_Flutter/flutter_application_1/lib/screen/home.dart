@@ -4,6 +4,8 @@ import 'package:get/get.dart';
 
 
 class HomePage extends StatefulWidget {
+  const HomePage({super.key});
+
   @override
   _HomePageState createState() => _HomePageState();
 }
@@ -34,19 +36,19 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
     Get.put(UserModelController());
     return Scaffold(
       appBar: AppBar(
-        title: Text('Home'),
+        title: const Text('Home'),
       ),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Container(
-              padding: EdgeInsets.all(20),
-              margin: EdgeInsets.symmetric(horizontal: 20),
+              padding: const EdgeInsets.all(20),
+              margin: const EdgeInsets.symmetric(horizontal: 20),
               decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(15),
-                boxShadow: [
+                boxShadow: const [
                   BoxShadow(
                     color: Colors.black26,
                     blurRadius: 10,
@@ -72,7 +74,7 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
                     builder: (context, child) {
                       return Transform.scale(
                         scale: _animation.value,
-                        child: Icon(
+                        child: const Icon(
                           Icons.favorite,
                           color: Colors.red,
                           size: 100,

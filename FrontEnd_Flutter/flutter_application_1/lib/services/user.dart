@@ -1,12 +1,25 @@
 import 'package:flutter_application_1/models/userModel.dart';
 import 'package:dio/dio.dart';
+import 'package:flutter_application_1/controllers/userModelController.dart';
+import 'package:get_storage/get_storage.dart';
 
 class UserService {
+  final UserModelController userModelController = UserModelController();
   final String baseUrl = "http://127.0.0.1:3000"; // URL de tu backend Web
   //final String baseUrl = "http://10.0.2.2:3000"; // URL de tu backend Android
   final Dio dio = Dio(); // Usa el prefijo 'Dio' para referenciar la clase Dio
   var statusCode;
   var data;
+
+  void saveId(String id) {
+    final box = GetStorage();
+    box.write('_id', id);
+  }
+
+  String? getId() {
+    final box = GetStorage();
+    return box.read('_id');
+  }
 
   //Función createUser
   Future<int> createUser(UserModel newUser) async {
@@ -50,6 +63,24 @@ class UserService {
     }
   }
 
+
+   Future<UserModel> getUser(String userId) async {
+    print('getUser');
+    try {
+      var res = await dio.get('$baseUrl/user/$userId');
+      
+
+      // Convertir los datos en una lista de objetos Place
+      final user  =UserModel.fromJson(res.data);
+
+      return user; // Devolver la lista de lugares
+    } catch (e) {
+      // Manejar cualquier error que pueda ocurrir durante la solicitud
+      print('Error fetching data: $e');
+      rethrow; // Relanzar el error para que el llamador pueda manejarlo
+    }
+  }
+
   Future<List<UserModel>> getUsers() async {
     print('getUsers');
     try {
@@ -65,7 +96,7 @@ class UserService {
     } catch (e) {
       // Manejar cualquier error que pueda ocurrir durante la solicitud
       print('Error fetching data: $e');
-      throw e; // Relanzar el error para que el llamador pueda manejarlo
+      rethrow; // Relanzar el error para que el llamador pueda manejarlo
     }
   }
 
@@ -117,8 +148,7 @@ class UserService {
     print('request');
 
     // Utilizar Dio para enviar la solicitud POST a http://127.0.0.1:3000/user
-    Response response =
-        await dio.delete('$baseUrl/user/$id');
+    Response response = await dio.delete('$baseUrl/user/$id');
     //En response guardamos lo que recibimos como respuesta
     //Printeamos los datos recibidos
 
@@ -157,14 +187,14 @@ class UserService {
     //Aquí llamamos a la función request
     print('request');
 
-    print('el login es:${logIn}');
+    print('el login es:$logIn');
 
     Response response =
         await dio.post('$baseUrl/user/logIn', data: logInToJson(logIn));
     //En response guardamos lo que recibimos como respuesta
     //Printeamos los datos recibidos
 
-    data = response.data.toString();
+    data = response.data;
     print('Data: $data');
     //Printeamos el status code recibido por el backend
 
@@ -172,6 +202,8 @@ class UserService {
     print('Status code: $statusCode');
 
     if (statusCode == 200) {
+      saveId(data['_id']);
+
       print('200');
       return 201;
     } else if (statusCode == 400) {
@@ -191,7 +223,6 @@ class UserService {
       return -1;
     }
   }
-  
 
   Map<String, dynamic> logInToJson(logIn) {
     return {'mail': logIn.mail, 'password': logIn.password};
