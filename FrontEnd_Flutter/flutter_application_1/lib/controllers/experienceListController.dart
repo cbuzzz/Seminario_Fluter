@@ -4,11 +4,14 @@ import 'package:get/get.dart';
 import 'package:flutter_application_1/services/experience.dart';
 import 'package:flutter_application_1/models/experienceModel.dart';
 import 'package:flutter_application_1/controllers/experienceController.dart';
+import 'package:flutter_application_1/models/userModel.dart';
 
 class ExperienceListController extends GetxController {
   var isLoading = true.obs; // Controla el estado de carga
   var experienceList = <ExperienceModel>[].obs; // Lista de experiencias
-  final ExperienceService experienceService = ExperienceService(); // Servicio para experiencias
+  var userList = <UserModel>[].obs;
+  final ExperienceService experienceService =
+      ExperienceService(); // Servicio para experiencias
 
   @override
   void onInit() {
@@ -20,15 +23,15 @@ class ExperienceListController extends GetxController {
   Future<void> fetchExperiences() async {
     try {
       isLoading(true);
-      
+
       // Obtener lista de experiencias desde el servicio
       var experiences = await experienceService.getExperiences();
-      
+
       // Procesar detalles de cada experiencia
       for (var experience in experiences) {
-        await experience.loadDetails(); // Método en ExperienceModel
+        await experience.loadDetails(experiences); // Método en ExperienceModel
       }
-      
+
       experienceList.assignAll(experiences); // Actualizar la lista observable
     } catch (e) {
       // Mostrar error al usuario

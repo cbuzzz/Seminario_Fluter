@@ -5,11 +5,14 @@ import 'package:flutter_application_1/widgets/experienceCard.dart';
 import 'package:flutter_application_1/widgets/experienceDialog.dart';
 
 class ExperiencePage extends StatelessWidget {
-  const ExperiencePage({super.key});
+  ExperiencePage({super.key});
+
+   final ExperienceListController experienceListController =
+      Get.put(ExperienceListController());
 
   @override
   Widget build(BuildContext context) {
-    final experienceListController = Get.find<ExperienceListController>();
+ 
 
     return Scaffold(
       appBar: AppBar(title: const Text('Experiencias')),

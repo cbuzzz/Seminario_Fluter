@@ -4,7 +4,7 @@ import 'package:flutter_application_1/services/user.dart';
 import 'package:flutter_application_1/models/userModel.dart';
 
 class RegisterController extends GetxController {
-  final UserService userService = Get.put(UserService());
+  final UserService userService = UserService();
 
   final TextEditingController nameController = TextEditingController();
    final TextEditingController passwordController = TextEditingController();

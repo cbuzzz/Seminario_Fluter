@@ -63,15 +63,13 @@ class UserService {
     }
   }
 
-
-   Future<UserModel> getUser(String userId) async {
+  Future<UserModel> getUser(String userId) async {
     print('getUser');
     try {
       var res = await dio.get('$baseUrl/user/$userId');
-      
 
       // Convertir los datos en una lista de objetos Place
-      final user  =UserModel.fromJson(res.data);
+      final user = UserModel.fromJson(res.data);
 
       return user; // Devolver la lista de lugares
     } catch (e) {
@@ -93,6 +91,27 @@ class UserService {
           responseData.map((data) => UserModel.fromJson(data)).toList();
 
       return users; // Devolver la lista de lugares
+    } catch (e) {
+      // Manejar cualquier error que pueda ocurrir durante la solicitud
+      print('Error fetching data: $e');
+      rethrow; // Relanzar el error para que el llamador pueda manejarlo
+    }
+  }
+
+  Future<List<String?>> getUsersId() async {
+    print('getUserID');
+    try {
+      var res = await dio.get('$baseUrl/user');
+      List<dynamic> responseData =
+          res.data; // Obtener los datos de la respuesta
+
+      // Convertir los datos en una lista de objetos Place
+      List<UserModel> users =
+          responseData.map((data) => UserModel.fromJson(data)).toList();
+      List<String?> usersId = users.map((user) => user.id).toList();
+      print('los ids son:$usersId');
+
+      return usersId; // Devolver la lista de lugares
     } catch (e) {
       // Manejar cualquier error que pueda ocurrir durante la solicitud
       print('Error fetching data: $e');

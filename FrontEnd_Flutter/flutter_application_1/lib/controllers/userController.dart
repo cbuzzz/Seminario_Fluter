@@ -5,7 +5,7 @@ import 'package:flutter_application_1/services/user.dart';
 import 'package:flutter_application_1/controllers/userModelController.dart';
 
 class UserController extends GetxController {
-  final UserService userService = Get.put(UserService());
+  final UserService userService = UserService();
   final UserModelController userModelController = Get.find();
 
   // Controladores de texto para la UI

@@ -41,7 +41,7 @@ class UserModel with ChangeNotifier {
   // Método fromJson para crear una instancia de UserModel desde un Map
   factory UserModel.fromJson(Map<String, dynamic> json) {
   return UserModel(
-    id: json['id']?.toString(), // Convertir a String si es int
+    id: json['_id']?.toString(), // Convertir a String si es int
     name: json['name']?.toString() ?? 'Usuario desconocido',
     mail: json['mail']?.toString() ?? 'No especificado',
     password: json['password']?.toString() ?? 'Sin contraseña',
@@ -52,7 +52,7 @@ class UserModel with ChangeNotifier {
   // Método toJson para convertir una instancia de UserModel en un Map
   Map<String, dynamic> toJson() {
     return {
-      'id': _id,
+      '_id': _id,
       'name': _name,
       'mail': _mail,
       'password': _password,

@@ -18,12 +18,11 @@ class UserListController extends GetxController {
       isLoading(true);
       var users = await userService.getUsers();
       userList.assignAll(users);
-        } catch (e) {
+      
+    } catch (e) {
       print("Error fetching users: $e");
     } finally {
       isLoading(false);
     }
   }
 }
-
-

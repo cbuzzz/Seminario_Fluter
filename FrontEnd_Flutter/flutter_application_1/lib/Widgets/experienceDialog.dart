@@ -8,8 +8,8 @@ class CreateExperienceDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final experienceController = Get.find<ExperienceController>();
-    final userListController = Get.find<UserListController>();
+    final ExperienceController experienceController = Get.put(ExperienceController());
+    final UserListController userListController = Get.put(UserListController());
 
     return Scaffold(
       appBar: AppBar(title: const Text('Crear Experiencia')),
@@ -52,23 +52,24 @@ class CreateExperienceDialog extends StatelessWidget {
                     SizedBox(
                       height: 200,
                       child: ListView.builder(
-                        itemCount: userList.length,
-                        itemBuilder: (context, index) {
-                          final user = userList[index];
-                          final isSelected = experienceController.selectedParticipants.contains(user);
+  itemCount: userList.length,
+  itemBuilder: (context, index) {
+    final user = userList[index];
+    final isSelected = experienceController.selectedParticipants.contains(user);
 
-                          return ListTile(
-                            title: Text(user.name),
-                            subtitle: Text(user.mail),
-                            trailing: IconButton(
-                              icon: Icon(
-                                isSelected ? Icons.check_box : Icons.check_box_outline_blank,
-                              ),
-                              onPressed: () => experienceController.toggleParticipant(user),
-                            ),
-                          );
-                        },
-                      ),
+    return ListTile(
+      key: ValueKey(user.id),  // Use a unique key for each ListTile
+      title: Text(user.name),
+      subtitle: Text(user.mail),
+      trailing: IconButton(
+        icon: Icon(
+          isSelected ? Icons.check_box : Icons.check_box_outline_blank,
+        ),
+        onPressed: () => experienceController.toggleParticipant(user),
+      ),
+    );
+  },
+),
                     ),
                   ],
                 );
