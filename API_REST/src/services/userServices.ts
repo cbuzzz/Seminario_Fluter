@@ -1,3 +1,4 @@
+import { Types } from 'mongoose';
 import { usersInterface, usersofDB } from '../modelos/types_d_users'
 //import userData from './users.json'
 
@@ -33,6 +34,7 @@ export const getEntries = {
         return await usersofDB.findByIdAndUpdate(id,body,{$new:true});
     },
     delete: async(id:string)=>{
-        return await usersofDB.findByIdAndDelete(id);
+        const objectId = new Types.ObjectId(id);
+        return await usersofDB.findByIdAndDelete(objectId);
     }
 }

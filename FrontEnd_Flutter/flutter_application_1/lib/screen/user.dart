@@ -41,6 +41,7 @@ class _UserPageState extends State<UserPage> {
     final data = await _userService.getUsers();
     setState(() {
       _data = data;
+      print('la informacion es:$_data');
     });
   }
 

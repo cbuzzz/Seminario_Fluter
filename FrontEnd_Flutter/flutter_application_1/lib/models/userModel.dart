@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 class UserModel with ChangeNotifier {
+   final String? id;
   String _name;
   String _mail;
   String _password;
@@ -8,7 +9,8 @@ class UserModel with ChangeNotifier {
 
   // Constructor
   UserModel(
-      {required String name,
+      { this.id,
+        required String name,
       required String mail,
       required String password,
       required String comment})
@@ -35,6 +37,7 @@ class UserModel with ChangeNotifier {
   // Método fromJson para crear una instancia de UserModel desde un Map
   factory UserModel.fromJson(Map<String, dynamic> json) {
     return UserModel(
+      id: json['_id']?.toString(),
       name: json['name'] ?? 'Usuario desconocido',
       mail: json['mail'] ?? 'No especificado',
       password: json['password'] ?? 'Sin contraseña',
@@ -45,6 +48,7 @@ class UserModel with ChangeNotifier {
   // Método toJson para convertir una instancia de UserModel en un Map
   Map<String, dynamic> toJson() {
     return {
+       '_id': id,
       'name': _name,
       'mail': _mail,
       'password':_password,

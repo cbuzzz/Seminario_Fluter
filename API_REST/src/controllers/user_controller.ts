@@ -17,3 +17,4 @@ export async function logIn(req:Request,res:Response):Promise<Response> {
         return res.status(500).json({ e: 'Failed to find user' });
     }
 }
+

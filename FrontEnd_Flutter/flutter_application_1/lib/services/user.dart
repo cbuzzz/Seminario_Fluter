@@ -112,14 +112,13 @@ class UserService {
   }
 
   Future<int> deleteUser(String id) async {
-    print('createUser');
+    print('deleteUser');
     print('try');
     //Aquí llamamos a la función request
     print('request');
 
     // Utilizar Dio para enviar la solicitud POST a http://127.0.0.1:3000/user
-    Response response =
-        await dio.delete('$baseUrl/user/$id');
+    Response response = await dio.delete('$baseUrl/user/$id');
     //En response guardamos lo que recibimos como respuesta
     //Printeamos los datos recibidos
 
@@ -130,7 +129,10 @@ class UserService {
     statusCode = response.statusCode;
     print('Status code: $statusCode');
 
-    if (statusCode == 201) {
+    if (statusCode == 201 || statusCode == 200) {
+      if (statusCode == 200) {
+        return 200;
+      }
       // Si el usuario se crea correctamente, retornamos el código 201
       print('201');
       return 201;
@@ -192,7 +194,6 @@ class UserService {
       return -1;
     }
   }
-  
 
   Map<String, dynamic> logInToJson(logIn) {
     return {'mail': logIn.mail, 'password': logIn.password};
