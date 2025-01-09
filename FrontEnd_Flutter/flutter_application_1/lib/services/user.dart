@@ -9,6 +9,16 @@ class UserService {
   var statusCode;
   var data;
 
+  Future<int> updateUser(UserModel user) async {
+    try {
+      var res = await dio.put('$baseUrl/user/${user.id}', data: user.toJson());
+      return res.statusCode ?? -1;
+    } catch (e) {
+      print('Error updating user: $e');
+      return -1;
+    }
+  }
+
   //Función createUser
   Future<int> createUser(UserModel newUser) async {
     print('createUser');

@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import '../models/userModel.dart'; // Ajusta la ruta si tu modelo está en otra carpeta
 import '../services/user.dart';
 import '../controllers/userListController.dart';
+import '../screen/editUser.dart';
 
 class UserCard extends StatelessWidget {
   final UserModel user;
@@ -17,14 +18,14 @@ class UserCard extends StatelessWidget {
       int statusCode = await userService.deleteUser(userId);
       print('el delete devuelve:$statusCode');
 
-      if (statusCode == 201|| statusCode==200) {
+      if (statusCode == 201 || statusCode == 200) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('Usuario eliminado con éxito.'),
             backgroundColor: Colors.green,
           ),
         );
-         // Actualiza la lista de usuarios
+        // Actualiza la lista de usuarios
         await userListController.fetchUsers();
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -62,17 +63,20 @@ class UserCard extends StatelessWidget {
             const SizedBox(height: 8),
             Text(user.comment ?? "Sin comentarios"),
             const SizedBox(height: 16),
-            Align(
-              alignment: Alignment.centerRight,
-              child: ElevatedButton.icon(
-                onPressed: () => _deleteUser(
-                    context, user.id!), // Llama al método de eliminación
-                icon: const Icon(Icons.delete, color: Colors.white),
-                label: const Text('Borrar'),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.red,
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                TextButton(
+                  onPressed: () {
+                    Get.to(() => EditUserPage(user: user));
+                  },
+                  child: Text('Modificar'),
                 ),
-              ),
+                TextButton(
+                  onPressed: () => _deleteUser(context, user.id ?? ''),
+                  child: Text('Eliminar'),
+                ),
+              ],
             ),
           ],
         ),
